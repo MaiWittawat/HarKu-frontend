@@ -4,8 +4,9 @@
             <div class="flex gap-8">
                 <MenuLink to="#" class="cursor-pointer"> logo </MenuLink>
                 <MenuLink to="#" class="cursor-pointer"> something </MenuLink>
-                <MenuLink to="#" class="cursor-pointer"> something </MenuLink>
+                <MenuLink to="/profile" class="cursor-pointer"> Profile </MenuLink>
                 <MenuLink to="/message" class="cursor-pointer"> Chat </MenuLink>
+                <MenuLink to="/match" class="cursor-pointer"> match </MenuLink>
             </div>
 
             <div v-if="user.name !== '' && user.name !== null" class="flex gap-12  justify-center items-center">

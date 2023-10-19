@@ -62,17 +62,15 @@
 </template>
 
 <script setup>
-import { useReceiverStore } from '~/stores/useReceiverStore'
-import { useAuthStore } from '~/stores/useAuthStore';
-import { useChatStore } from '~/stores/useChatStore';
 
+import { io } from 'socket.io-client';
+import { useAuthStore } from '~/stores/useAuthStore';
 import { useMessageStore } from '~/stores/useMessageStore';
 
 const users = ref([])
-const receiver = useReceiverStore()
 const auth = useAuthStore()
-const chats = useChatStore()
-
+const { $io } = useNuxtApp()
+ 
 const messageStore = useMessageStore()
 
 
@@ -84,16 +82,17 @@ const handleSelectUser = (id, name, email) => {
     // chats.setSender(auth.user.id)
     // console.log(chats.sender_id)
     // console.log("set Receiver")
-
+    
+    $io.emit("messageTo", {id:id, name:name, email:email})
 
     messageStore.clear()
-    console.log(messageStore.messages)
+    // console.log(messageStore.messages)
 
     messageStore.setReceiver(name, email)
     messageStore.setSender(auth.user.name, auth.user.email)
 
-    console.log("sender: ",messageStore.sender)
-    console.log("receiver: ",messageStore.receiver)
+    // console.log("sender: ",messageStore.sender)
+    // console.log("receiver: ",messageStore.receiver)
     
 }
 

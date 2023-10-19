@@ -111,7 +111,7 @@ const m = ref({
 })
 
 watch(receiver, () => {
-    console.log('Receiver changed: ', receiver.value)
+    // console.log('Receiver changed: ', receiver.value)
     getChatMessage()
 },
     { deep: true }
@@ -121,8 +121,8 @@ watch(receiver, () => {
 const getChatMessage = async () => {
     await getReceiverId()
 
-    console.log(m.value.receiver_id)
-    console.log(m.value.sender_id)
+    // console.log(m.value.receiver_id)
+    // console.log(m.value.sender_id)
 
     const response = await axios.post('http://localhost/api/chat', {
         sender_id: m.value.sender_id,
@@ -134,7 +134,7 @@ const getChatMessage = async () => {
         // console.log('get message success')
         // messages.value = response.data
         // console.log(messages.value)
-        console.log(response.data)
+        // console.log(response.data)
   
         
         // const messageBodies = response.data.map(message => message.body);
@@ -142,7 +142,7 @@ const getChatMessage = async () => {
         const messageBodies = response.data
         messageStore.setMessages(messageBodies);
         
-        console.log(messageStore.messages)
+        // console.log(messageStore.messages)
 
 
     }
