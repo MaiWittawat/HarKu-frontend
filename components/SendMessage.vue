@@ -32,7 +32,7 @@ const m = ref({
 const messageStore = useMessageStore()
 
 onMounted(() => {
-    $io.on('message', (messageValue) => {
+    $io.on('message', (messageValue, user) => {
         // // console.log('message from onMounted: ',message)
         // messageStore.addMessage(message)
         // // console.log('messageStore', messageStore.messages)
@@ -81,7 +81,7 @@ const onSubmit = async () => {
                 }
                 // console.log(message)
                 messageStore.addMessage(message)
-                $io.emit("message", messageValue)
+                $io.emit("message", messageValue, auth.user)
                 // console.log(messageStore.messages);
 
             }

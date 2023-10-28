@@ -83,7 +83,7 @@ const handleSelectUser = (id, name, email) => {
     // console.log(chats.sender_id)
     // console.log("set Receiver")
     
-    $io.emit("messageTo", {id:id, name:name, email:email})
+    $io.emit("messageTo", {id:auth.user.id, name:auth.user.name, email:auth.user.email},{id:id, name:name, email:email})
 
     messageStore.clear()
     // console.log(messageStore.messages)
@@ -93,7 +93,7 @@ const handleSelectUser = (id, name, email) => {
 
     // console.log("sender: ",messageStore.sender)
     // console.log("receiver: ",messageStore.receiver)
-    
+
 }
 
 const getAllUser = async () => {

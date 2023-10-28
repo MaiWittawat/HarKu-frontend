@@ -23,6 +23,12 @@
                     <input type="text" v-model="formData.password" placeholder="password" class="py-2.5 px-2 w-full">
                 </div>
 
+
+                <div class="flex justify-end">
+                    <a href="/forgetPassword" class="flex justify-end hover:underline">forget password</a>
+                </div>
+            
+
                 <button type="submit" class="shadow-lg my-6 py-1.5 rounded-sm bg-red-400 text-white">เข้าสู่ระบบ</button>
             </form>
 
@@ -58,28 +64,45 @@ const onSubmit = async () => {
 
     const { email, password } = formData
 
+    /* Laravel */
     const { data: response, error } = await useFetch("http://localhost/api/auth/login", {
         method: "POST",
         body: { email, password },
     })
+    
+    /* Java */
+    // const { data: response, error } = await useFetch("http://localhost:8091/api/auth/authenticate", {
+    //     method: "POST",
+    //     body: { email, password },
+    // })
 
     if (response.value !== null) {
-        
+        console.log(response.value)
         const { access_token, token_type } = response.value
 
         // console.log("get token")
 
         if (access_token !== null) {
             auth.setNewToken(access_token)
+            /* Laravel */
             const { data: user, error } = await useFetch("http://localhost/api/auth/me", {
                 method: "POST",
                 headers: {
                     "Accept": "application/json",
                     "Authorization": `Bearer ${auth.token}`
-                }
+                }    
             })
 
-            // console.log(user.value)
+            /* Java */
+            // const { data: user, error } = await useFetch("http://localhost:8091/api/auth/me", {
+            //     method: "POST",
+            //     headers: {
+            //         "Accept": "application/json",
+            //         "Authorization": `Bearer ${auth.token}`
+            //     }    
+            // })
+
+            console.log(user.value)
 
             if (user.value !== null) {
                 auth.setUser(user.value.name, user.value.email, user.value.id)
@@ -93,6 +116,37 @@ const onSubmit = async () => {
     else {
         console.log("error", error)
     }
+
+    // if (response.value !== null) {
+        
+    //     const { access_token, token_type } = response.value
+
+    //     // console.log("get token")
+
+    //     if (access_token !== null) {
+    //         auth.setNewToken(access_token)
+    //         const { data: user, error } = await useFetch("http://localhost/api/auth/me", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Accept": "application/json",
+    //                 "Authorization": `Bearer ${auth.token}`
+    //             }
+    //         })
+
+    //         // console.log(user.value)
+
+    //         if (user.value !== null) {
+    //             auth.setUser(user.value.name, user.value.email, user.value.id)
+    //             await navigateTo("/main")
+    //         } else {
+    //             auth.clear()
+    //             console.log("Please try again")
+    //         }
+    //     }
+    // }
+    // else {
+    //     console.log("error", error)
+    // }
 }
 
 

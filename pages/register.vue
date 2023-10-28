@@ -5,7 +5,7 @@
     <div class="outline min-h-screen flex flex-col items-center justify-center">
         <div class="text-3xl font-bold my-10">สร้างบัญชี</div>
 
-        <form @submit.prevent="onSubmit()" class="w-4/5 flex flex-col gap-10 items-center justify-center"
+        <form @submit.prevent="onSubmitForm()" class="w-4/5 flex flex-col gap-10 items-center justify-center"
             enctype="multipart/form-data">
             <div class="flex">
                 <div class="flex w-3/5  justify-center">
@@ -43,25 +43,45 @@
                             </div>
                         </div>
 
+                        <br>
+
                         <div class="flex flex-col gap-2">
                             <label for="gender">เพศ</label>
                             <div class="flex gap-2">
-                                <input type="radio" name="gender" v-model="formData.gender" value="man">ผู้ชาย
-                                <input type="radio" name="gender" v-model="formData.gender" value="men">ผู้หญิง
-                                <input type="radio" name="gender" v-model="formData.gender" value="other">อื่นๆ >
+                                <input type="radio" id="gender_1" name="gender" v-model="formData.gender" value="man" class="hidden">
+                                    <label for="gender_1" class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">ผู้ชาย</label>
+
+                                <input type="radio" id="gender_2" name="gender" v-model="formData.gender" value="men" class="hidden">
+                                    <label for="gender_2" class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">ผู้หญิง</label>
+
+                                <input type="radio" id="gender_3" name="gender" v-model="formData.gender" value="other" class="hidden">
+                                    <label for="gender_3" class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">อื่นๆ ></label>
                             </div>
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <label for="show_sex">เเสดง</label>
                             <div class="flex gap-2">
-                                <input type="radio" name="show" v-model="formData.show_gender" value="man">ผู้ชาย
-                                <input type="radio" name="show" v-model="formData.show_gender" value="men">ผู้หญิง
-                                <input type="radio" name="show" v-model="formData.show_gender" value="all">ทุกคน
+                                <input type="radio" id="show_1" name="show" v-model="formData.show_gender" value="man"
+                                    class="hidden">
+                                <label for="show_1"
+                                    class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">ผู้ชาย</label>
+                                <input type="radio" id="show_2" name="show" v-model="formData.show_gender" value="men"
+                                    class="hidden">
+                                <label for="show_2"
+                                    class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">ผู้หญิง</label>
+                                <input type="radio" id="show_3" name="show" v-model="formData.show_gender" value="all"
+                                    class="hidden">
+                                <label for="show_3"
+                                    class="flex flex-col h-10 w-24 border-2 cursor-pointer rounded-full justify-center items-center">ทุกคน</label>
                             </div>
                         </div>
+
+                        <br>
+
                     </div>
                 </div>
+
 
                 <div class="flex flex-col w-2/5 items-center justify-center">
                     <div class="grid grid-cols-2 items-center justify-center">
@@ -81,7 +101,7 @@
                                                 </div>
                                             </div>
 
-                                            <input type="file" @change="handleFileImage" class="h-full w-full opacity-0"
+                                            <input @change="handleFileChange()" ref="fileInput" type="file" class="h-full w-full opacity-0"
                                                 name="image">
 
                                         </div>
@@ -96,25 +116,8 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-center">
-                <div class="w-full bg-gray-400 h-0.5 relative flex items-center justify-center">
-                    <span class="absolute bg-white rounded-full px-1">or</span>
-                </div>
-            </div>
 
-            <div class="flex flex-col w-11/12 gap-2">
-                <span for="interest">ความสนใจ</span>
-                <button class="outline outline-1 outline-gray-400 text-left rounded-full w-1/5"><i
-                        class="fa-solid fa-plus"></i> เพิ่มความสนใจ</button>
-            </div>
-
-            <div class="flex flex-col w-11/12 gap-2">
-                <span for="sexualOrientation">รสนิยมทางเพศ</span>
-                <button class="outline outline-1 outline-gray-400 text-left rounded-full w-1/4"><i
-                        class="fa-solid fa-plus"></i> เพิ่มรสนิยมทางเพศ</button>
-            </div>
-
-            <button type="submit">submit</button>
+            <button type="submit" class="outline w-1/2 py-2 rounded-full text-white" style="background-color: #ff7b9f;">submit</button>
 
         </form>
 
@@ -137,48 +140,59 @@ const formData = reactive({
     birtday: [0, 0, 0],
     gender: "",
     show_gender: "",
-    image: null,
 })
 
-const handleFileImage = (event) => {
-    formData.image = event.target.files[0]
-}
 
-const onSubmit = async () => {
 
+const onSubmitForm = async () => {
+
+    console.log(formData)
 
     const { name, email, password, gender, show_gender } = formData;
-    const birthday = formData.birtday[0] + "-" + formData.birtday[1] + "-" + formData.birtday[2]
+    const birthday = formData.birtday[0] + "/" + formData.birtday[1] + "/" + formData.birtday[2]
     // const {image} = formData;
 
 
 
-    // console.log(name, email, password, birthday, gender, show_gender)
+    console.log(name, email, password, birthday, gender, show_gender)
     // console.log(formData)
 
-    const { data: response, error } = await useFetch("http://localhost/api/register", {
-        method: "POST",
-        body: {
-            name,
-            email,
-            password,
-            birthday,
-            gender,
-            show_gender,
-        }
-    })
+    // const { data: response, error } = await useFetch("http://localhost/api/register", {
+    //     method: "POST",
+    //     body: {
+    //         name,
+    //         email,
+    //         password,
+    //         birthday,
+    //         gender,
+    //         show_gender,
+    //     }
+    // })
 
-    if (response.value !== null) {
-        console.log("success")
-        console.log(response.value)
-    }
-    else {
-        const { message } = error.value.data
-        console.log("error: ", message)
-    }
+    // const {data: respone , error} = await useFetch("http://localhost:8091/images",{
+    //     method: "POST",
+    //     body: {
+
+    //     }
+    // })
+    
+
+    // if (response.value !== null) {
+    //     console.log("success")
+    //     console.log(response.value)
+    // }
+    // else {
+    //     const { message } = error.value.data
+    //     console.log("error: ", message)
+    // }
 }
 
 
 </script>
 
-<style></style>
+<style>
+input:checked+label {
+    border-color: #ea3968;
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}</style>

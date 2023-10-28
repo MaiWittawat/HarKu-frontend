@@ -26,18 +26,33 @@ io.on('connect', (socket) => {
     // })
 
 
-    socket.on('message', (message) => {
-        console.log(`ID [${socket.id}] speak [${message}]`)
-        socket.broadcast.emit('message', message)
+    socket.on('message', (message, user) => {
+        const roomName = `room-${user.id}`;
+        socket.to(roomName).emit('message', message);
+        console.log(`userId ${user.id} speak ${message} to room: ${roomName}`)
+        // console.log(`ID [${socket.id}] speak [${message}]`)
+        // socket.broadcast.emit('message', message)
     })
 
 
-    socket.on('messageTo',(user)=>{
-        console.log("userId : ",user.id)
-        console.log("userName : ",user.name)
-        console.log("userEmail : ",user.email)
-        console.log("socket.room :",socket.rooms)
+    socket.on('messageTo',(sender, receiver)=>{
+
+        // const roomName = `room-${sender.id}`;
+        socket.join(roomName);
+
+        console.log(user.id, "join room :", roomName)
+
+        // console.log("userId : ",user.id)
+        // console.log("userName : ",user.name)
+        // console.log("userEmail : ",user.email)
+        // console.log("socket.room :",socket.rooms)
         // io.to()
+    })
+
+
+    socket.on('disconnecting', () => {
+        console.log('disconnected', socket.id)
+        socket.broadcast.emit('message', `${socket.id} left`)
     })
 
 });

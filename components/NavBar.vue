@@ -32,13 +32,23 @@ const auth = useAuthStore()
 const user = ref(auth.user)
 
 const logout = async () => {
-    const { data: response, error } = await useFetch("http://localhost/api/auth/logout", {
+    /* Laravel */
+    // const { data: response, error } = await useFetch("http://localhost/api/auth/logout", {
+    //     method: "POST",
+    //     headers: {
+    //         "Accept": "application/json",
+    //         "Authorization": `Bearer ${auth.token}`
+    //     }
+    // })
+
+    const { data: response, error } = await useFetch("http://localhost:8091/api/auth/logout", {
         method: "POST",
         headers: {
             "Accept": "application/json",
             "Authorization": `Bearer ${auth.token}`
         }
     })
+
     if (response !== null) {
         console.log("logout success")
         auth.clear()
