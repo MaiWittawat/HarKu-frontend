@@ -1,20 +1,26 @@
 <template>
-    <div>
-        <form @submit.prevent="onSubmit()">
-            <div class="absolute bg-white border-t w-full bottom-0 flex" id="chatbox_footer">
+    <footer class="shrink-0 z-10 bg-white inset-x-0">
 
-                <div id="custom_form_group" class="flex flex-nowrap w-full py-2 px-2 ">
-                    <input v-model="messageIp" type="text" id="control"
-                        class="outline-none p-1 shadow-none rounded-md bg-gray-200 pl-4" style="width: 90%">
-                    <button id="submit" class="text-base font-bold text-blue-700" style="width: 10%">Send</button>
+        <div class="p-2 border-t">
+
+            <form @submit.prevent="sendMessage()" autocapitalize="off">
+                <input type="hidden" autocomplete="false" style="display: none;">
+                <div class="grid grid-cols-12">
+                    <input v-model="messageIp" type="text" autocomplete="off" autofocus placeholder="write you message here" maxlength="1700"
+                        class="col-span-11 bg-gray-100 border-0 outline-0 focus:border-0 focus:ring-0 hover:ring-0 rounded-lg focus:outline-none px-3 py-1.5">
+
+                    <button type="submit" class="col-span-1 text-blue-700 font-bold hover:bg-gray-700 mx-4 rounded-md hover:text-white">Send</button>
                 </div>
-            </div>
-        </form>
+            </form>
 
-    </div>
+        </div>
+
+    </footer>
 </template>
 
+
 <script setup>
+
 import { useAuthStore } from '~/stores/useAuthStore';
 import { useMessageStore } from '~/stores/useMessageStore';
 import axios from 'axios';
@@ -32,17 +38,18 @@ const m = ref({
 const messageStore = useMessageStore()
 
 onMounted(() => {
-    $io.on('message', (messageValue, user) => {
-        // // console.log('message from onMounted: ',message)
-        // messageStore.addMessage(message)
-        // // console.log('messageStore', messageStore.messages)
+    $io.on('message', (messageValue, sender, receiver) => {
+
+        console.log("from onMounted before set: ",messageStore.last_message)
+        messageStore.setLastMessage(messageValue)
+        console.log("from onMounted after set: ",messageStore.last_message)
 
         const created_at = getFormattedDate();
 
         const message = {
-            id: messageStore.messages.length + 1, // คำนวณ ID ตามจำนวนข้อความที่มี
-            sender_id: m.value.receiver_id, // คุณอาจต้องแก้ไขให้ถูกต้องตามข้อมูล
-            receiver_id: m.value.sender_id, // คุณอาจต้องแก้ไขให้ถูกต้องตามข้อมูล
+            id: messageStore.messages.length + 1,
+            sender_id: m.value.receiver_id,
+            receiver_id: m.value.sender_id,
             read: 0,
             body: messageValue,
             created_at: created_at,
@@ -54,42 +61,53 @@ onMounted(() => {
 })
 
 
-const onSubmit = async () => {
+const sendMessage = async () => {
+    console.log(messageIp.value)
+
     await getReceiverId()
 
-    // console.log(messageIp.value.trim())
+
     if (messageIp.value.trim()) {
-        try {
-            const response = await axios.post('http://localhost/api/message', {
-                sender_id: m.value.sender_id,
-                receiver_id: m.value.receiver_id,
-                body: messageIp.value.trim()
-            });
-            if (messageStore.messages.length !== 0) {
-                const lastIndex = await useFetch('http://localhost/api/lastMessageIndex')
-                // console.log(lastIndex.data.value)
-                const messageValue = messageIp.value.trim()
 
-                const message = {
-                    id: parseInt(lastIndex.data.value),
+        const res = await getMatch(messageIp.value.trim(), { id: auth.user.id, name: auth.user.name, email: auth.user.email }, { id: m.value.receiver_id, name: messageStore.receiver.name, email: messageStore.receiver.email })
+  
+        if (res !== "error") {
+            try {
+                const response = await axios.post('http://localhost/api/message', {
                     sender_id: m.value.sender_id,
-                    receuver_id: m.value.receiver_id,
-                    read: 0,
-                    body: messageValue,
-                    created_at: getFormattedDate(),
-                    updated_at: getFormattedDate()
+                    receiver_id: m.value.receiver_id,
+                    body: messageIp.value.trim()
+                });
+                if (messageStore.messages.length !== 0) {
+                    const lastIndex = await useFetch('http://localhost/api/lastMessageIndex')
+             
+                    const messageValue = messageIp.value.trim()
+
+                    const message = {
+                        id: parseInt(lastIndex.data.value),
+                        sender_id: m.value.sender_id,
+                        receuver_id: m.value.receiver_id,
+                        read: 0,
+                        body: messageValue,
+                        created_at: getFormattedDate(),
+                        updated_at: getFormattedDate()
+                    }
+
+                    messageStore.addMessage(message)
+                    messageStore.setLastMessage(message)
+                    
+             
+
                 }
-                // console.log(message)
-                messageStore.addMessage(message)
-                $io.emit("message", messageValue, auth.user)
-                // console.log(messageStore.messages);
+           
 
+
+            } catch (error) {
+                console.error('Fail to send Message:', error);
             }
-            // console.log(response)
-
-
-        } catch (error) {
-            console.error('Fail to send Message:', error);
+        }
+        else {
+            console.error("Fail to send message")
         }
         messageIp.value = '';
     }
@@ -102,8 +120,8 @@ const getReceiverId = async () => {
         email: messageStore.receiver.email
     })
     if (response !== null) {
-        // console.log(response)
-        m.value.receiver_id = response.data.id
+        // console.log(response.data)
+        m.value.receiver_id = response.data[0].user.id
 
     }
     else {
@@ -125,6 +143,37 @@ const getFormattedDate = () => {
 
     const formatter = new Intl.DateTimeFormat('en-US', options);
     return formatter.format(currentDate);
+}
+
+
+const getMatch = async (message, sender, receiver) => {
+
+    // console.log("sender: ", sender)
+    // console.log("receiver: ", receiver)
+    // console.log("message: ", message)
+
+    try {
+        const { data: res, error } = await useFetch('http://localhost/api/isMatch', {
+            method: "POST",
+            body: {
+                sender_id: sender.id,
+                receiver_id: receiver.id,
+            }
+        });
+
+        if (res.value !== null) {
+            // console.log("have value: ", res.value);
+
+            $io.emit("message", message, sender, receiver, res.value.matchesBy, res.value.matchesTo)
+            return "ok"
+
+        } else {
+            // console.error("can't send you message");
+            return "error"
+        }
+    } catch (error) {
+        console.error("Error in fetching data:", error);
+    }
 }
 
 

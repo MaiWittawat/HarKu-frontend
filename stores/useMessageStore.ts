@@ -4,7 +4,8 @@ export const useMessageStore = defineStore('Message', {
     state: () => ({
         sender: { name: "", email: "" },
         receiver: { name: "", email: "" },
-        messages: []
+        messages: [],
+        last_message: "",
     }),
     getters: {
         getMessages: (state) => {
@@ -32,12 +33,16 @@ export const useMessageStore = defineStore('Message', {
         addMessage(message: string) {
             this.messages.push(message)
         },
+        setLastMessage(message: string){
+            this.last_message = message
+        },
         clear() {
             this.messages = []
             this.sender.name = ''
             this.sender.email = ''
             this.receiver.name = ''
             this.receiver.email = ''
+            this.last_message = ''
         },
     }
 })

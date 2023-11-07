@@ -1,26 +1,40 @@
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <div class="flex justify-center">
+    <div class="min-h-full fixed flex bg-white border lg:shadow-sm overflow-hidden inset-0  m-auto lg:h-[90%] rounded-t-lg ">
 
-        <div id="chat_container"
-            class="fixed w-11/12 h-3/4 mt-8 border-black border flex flex-nowrap rounded-xl px-2 bg-white">
+        <div class="hidden lg:flex relative w-full md:w-[320px] xl:w-[400px] overflow-y-auto shrink-0 h-full border">
 
-            <div id="chat_list_container" class="h-full border-r border-gray-900" style="width: 27%">
-                <ChatList></ChatList>
-            </div>
-
-
-            <div id="chat_box_container" class="w-3/4 h-full relative">
-                <ChatBox></ChatBox>
-
-                <SendMessage></SendMessage>
-            </div>
+            <ChatList></ChatList>
 
         </div>
 
+        <div class="grid w-full border-l h-full relative overflow-y-auto" style="contain:content">
 
+            <ChatBox></ChatBox>
+
+        </div>
     </div>
+    
+    <!-- <div
+        class="fixed h-full flex bg-white border top-48 lg:shadow-sm overflow-hidden inset-0  m-auto lg:h-[90%] rounded-t-lg ">
+
+        <div class="hidden lg:flex relative w-full md:w-[320px] xl:w-[400px] overflow-y-auto shrink-0 h-full border">
+
+            <ChatListDemo></ChatListDemo>
+
+        </div>
+
+        <div class="grid w-full border-l h-full relative overflow-y-auto" style="contain:content">
+
+            <ChatBoxDemo></ChatBoxDemo>
+
+        </div>
+
+    </div> -->
 </template>
 
+<script setup>
+definePageMeta({
+    layout:"",
+})
+
+</script>

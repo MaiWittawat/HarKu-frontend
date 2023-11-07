@@ -1,113 +1,110 @@
 <template>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <div class="w-full overflow-hidden">
 
-    <div>
-        <div class="border-gray-900 h-16 border-b absolute top-0 w-full flex flex-nowrap justify-between"
-            id="messagebox_header">
+        <div class="border-b flex flex-col grow h-full">
 
-            <div class="flex items-center gap-1 ml-4 text-lg w-full" id="">
+            <!-- header -->
 
+            <header class="w-full sticky inset-x-0 flex pb-[5px] pt-[5px] top-0 z-10 bg-white border-b">
 
-                <div class="flex items-center p-2 rounded-lg hover:bg-gray-200 cursor-pointer w-full">
+                <div class="flex w-full items-center px-2 lg:px-4 gap-2 md:gap-5">
+                    <a href="/main" class="shrink-0 lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-arrow-left" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                        </svg>
+                    </a>
 
-                    <div id="img_container" class="h-8 w-9 mx-0 my-auto ml-3">
-                        <img src="https://static.vecteezy.com/system/resources/previews/020/765/399/non_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg"
-                            alt="" class="object-cover w-full h-full rounded-full outline outline-1">
+                    <div v-if="receiver.image !== null && receiver.image !== undefined" class="shrink-0 h-10 w-10">
+                        <img class="object-cover w-full h-full rounded-full " :src="receiver.image" alt="" style="">
                     </div>
 
-                    <div v-if="receiver.name !== ''" id="name" class="pl-2 w-full">
-                        {{ receiver.name }}
+                    <div v-else-if="receiver.image === null && receiver.name !== '' && receiver.email !== ''" class="shrink-0 h-10 w-10">
+                        <Avatar></Avatar>
                     </div>
 
-                    <div v-else class="pl-2 w-full">
-                        unknow
-                    </div>
+                    <h6 v-if="receiver.name !== ''" class="font-bold truncate">{{ receiver.name }}</h6>
+
                 </div>
+            </header>
 
-            </div>
+            <!-- body -->
 
-            <div id="info"
-                class="text-center text-xl flex flex-nowrap items-center mr-0.5  w-3/12 justify-around text-blue-500">
+            <main ref="messagesContainer"
+                class="flex flex-col gap-3 p-2.5 overflow-y-auto flex-grow overscroll-contain overflow-x-hidden w-full my-auto">
 
-                <div id="info_item" class="hover:cursor-pointer">
-                    <i class="fa-solid fa-phone"></i>
-                </div>
 
-                <div id="info_item" class="hover:cursor-pointer">
-                    <i class="fa-regular fa-image"></i>
-                </div>
+                <div v-for="message in messages" :key="message">
+                    <div v-if="auth.user.id === message.sender_id" class="chat chat-end">
+                        <div class="chat-header flex items-center gap-2">
+                            You
+                            <time class="text-xs opacity-50 flex">{{ format(new Date(message.created_at), 'dd/MM/yyyy HH: mm') }}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-check" viewBox="0 0 16 16">
+                                    <path
+                                        d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                </svg>
+                            </time>
 
-                <div id="info_item" class="hover:cursor-pointer">
-                    <i class="fa-solid fa-circle-info"></i>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div id="messagebox_body" class="absolute w-full top-16  overflow-y-scroll overflow-hidden"
-            style="height: 70.5%;">
-
-            <div v-for="message in messages" :key="message">
-                <div v-if="auth.user.id === message.sender_id" id="msg_body_me" class="block my-4 rounded-t-lg rounded-l-lg p-2 bg-gray-200 outline mr-6 ml-auto"
-                    style="max-width: 80%">
-                    {{ message.body }}
-                    <!-- me -->
-                    <div id="msg_body_me_footer" class="w-full flex justify-end items-end ">
-                        <div id="date">
-                            5 day ago
                         </div>
-                        <div id="read" class="text-green-900">
-                            <i class="fa-solid fa-check"></i>
-                        </div>
+
+                        <div class="chat-bubble max-w-xs text-sm md:text-base tracking-wide lg:tracking-normal text-white" style="background-color: #ea3968;">{{
+                            message.body }}</div>
+
                     </div>
-                </div>
 
+                    <div v-else class="chat chat-start">
+                        <Avatar class="chat-image avatar"></Avatar>
+                        <div class="chat-header flex items-center gap-2">
+                            {{ receiver.name }}
+                            <time class="text-xs opacity-50 flex">{{ format(new Date(message.created_at), 'dd/MM/yyyy HH:mm') }}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-check" viewBox="0 0 16 16">
+                                    <path
+                                        d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+                                </svg>
+                            </time>
 
-                <div v-else id="msg_body_reciver" class="block ml-6 my-4 rounded-t-lg rounded-r-lg p-2 bg-blue-500 text-white"
-                    style="max-width: 80%">
-                    {{ message.body }}
-                    <!-- receiver -->
-                    <div id="msg_body_reciver_footer" class="w-full flex justify-end items-end ">
-                        <div id="date">
-                            5 day ago
                         </div>
-                        <div id="read" class="">
-                            <i class="fa-solid fa-check"></i>
+                        <div class="chat-bubble max-w-xs text-sm md:text-base tracking-wide lg:tracking-normal bg-gray-300 text-black">{{
+                            message.body }}
                         </div>
                     </div>
                 </div>
+            </main>
 
-            </div>
+
+            <!-- footer -->
+
+            <!-- Send Message -->
+
+            <SendMessage v-if="messageStore.sender.name !== '' && messageStore.receiver.name !== ''"></SendMessage>
+            <div v-else class="min-h-full flex items-center justify-center font-bold text-xl">Select to start chat</div>
+
         </div>
 
     </div>
 </template>
 
 <script setup>
-
-
+import { format } from 'date-fns';
 import { useAuthStore } from '~/stores/useAuthStore';
 import { useMessageStore } from '~/stores/useMessageStore';
 import axios from 'axios';
 
-// const receiverStore = useReceiverStore()
-// const receiver = computed(() => receiverStore.getReceiver);
-// const messages = ref({})
-// const chats = useChatStore()
 
 const auth = useAuthStore()
 const messageStore = useMessageStore()
-
+const messagesContainer = ref(null);
 const messages = computed(() => messageStore.messages);
-const receiver = computed(() => messageStore.getReceiver)
+const receiver = computed(() => messageStore.getReceiver);
 
+console.log(messageStore.sender.name === '');
 
 const m = ref({
-    sender_id : auth.user.id,
-    receiver_id : null
+    sender_id: auth.user.id,
+    receiver_id: null
 })
 
 watch(receiver, () => {
@@ -119,52 +116,76 @@ watch(receiver, () => {
 
 
 const getChatMessage = async () => {
-    await getReceiverId()
 
-    // console.log(m.value.receiver_id)
-    // console.log(m.value.sender_id)
+    const data = await getReceiverId()
 
-    const response = await axios.post('http://localhost/api/chat', {
-        sender_id: m.value.sender_id,
-        receiver_id: m.value.receiver_id,
+    if (data === "ok") {
 
-    })
+        const res = await axios.get(`http://localhost/api/getImage/${messageStore.receiver.email}`)
 
-    if (response !== null) {
-        // console.log('get message success')
-        // messages.value = response.data
-        // console.log(messages.value)
-        // console.log(response.data)
-  
-        
-        // const messageBodies = response.data.map(message => message.body);
-        // console.log(messageBodies)
-        const messageBodies = response.data
-        messageStore.setMessages(messageBodies);
-        
-        // console.log(messageStore.messages)
+        if (Object.keys(res.data).length !== 0) {
+            receiver.value.image = res.data;
+            // console.log(receiver.value)
+        }
+        else {
+            receiver.value.image = null;
+        }
 
+        const response = await axios.post('http://localhost/api/chat', {
+            sender_id: m.value.sender_id,
+            receiver_id: m.value.receiver_id,
+        })
+
+        if (response !== null) {
+
+            const messageBodies = response.data
+            messageStore.setMessages(messageBodies);
+
+            // console.log(messageStore.messages)
+        }
+        else {
+            console.log('fail to get message')
+        }
 
     }
     else {
-        console.log('fail to get message')
+        console.log("fail to get Receiver");
     }
+
 }
 
-const getReceiverId = async()=>{
+const getReceiverId = async () => {
+
     // console.log(messageStore.receiver.email)
-    const response = await axios.post("http://localhost/api/getUser",{
-        email : messageStore.receiver.email
+    const response = await axios.post("http://localhost/api/getUser", {
+        email: messageStore.receiver.email
     })
-    if(response !== null){
+    if (response !== null) {
         // console.log(response)
-        m.value.receiver_id = response.data.id
+        m.value.receiver_id = response.data[0].user.id
+        return "ok"
         // console.log("m.receiver_id = ",m.value.receiver_id)
     }
     else {
         console.log("fail to getUser")
+        return "error"
     }
 }
+
+const scrollMessagesContainerToBottom = () => {
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    }
+};
+
+
+onMounted(() => {
+    scrollMessagesContainerToBottom();
+});
+
+onUpdated(() => {
+    scrollMessagesContainerToBottom();
+});
 
 getChatMessage()
 </script>

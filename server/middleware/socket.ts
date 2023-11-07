@@ -1,4 +1,5 @@
-import { Server } from 'socket.io'
+import { useFetch } from 'nuxt/app';
+import { Server } from 'socket.io';
 
 const io = new Server(3002, {
     cors: {
@@ -6,62 +7,46 @@ const io = new Server(3002, {
     }
 });
 
+const onlineUsers = new Set();
+
 io.on('connection', (socket) => {
-    console.log('Connection', socket.id)
-})
 
-io.on('connect', (socket) => {
-
-    // socket.emit('message', `welcome ${socket.id}`)
-    // socket.broadcast.emit('message', `${socket.id} joined`)
-
-    // socket.on('message', (message) => {
-    //     console.log(`ID [${socket.id}] speak [${message}]`)
-    //     socket.broadcast.emit('message', message)
-    // })
-
-    // socket.on('disconnecting', () => {
-    //     console.log('disconnected', socket.id)
-    //     socket.broadcast.emit('message', `${socket.id} left`)
-    // })
+    onlineUsers.add(socket.id);
+    console.log('User connected:', socket.id);
 
 
-    socket.on('message', (message, user) => {
-        const roomName = `room-${user.id}`;
-        socket.to(roomName).emit('message', message);
-        console.log(`userId ${user.id} speak ${message} to room: ${roomName}`)
-        // console.log(`ID [${socket.id}] speak [${message}]`)
-        // socket.broadcast.emit('message', message)
-    })
+    socket.on('disconnect', () => {
+        onlineUsers.delete(socket.id);
+        console.log('User disconnected:', socket.id);
 
+        const rooms = Object.keys(socket.rooms);
+        rooms.forEach((room) => {
+            if (room.startsWith('room-')) {
+                socket.leave(room); 
+            }
+        });
+    });
+    
+    
+    socket.on('message', (message, sender, receiver, match_by, match_to) => {
 
-    socket.on('messageTo',(sender, receiver)=>{
+        const room = `room-${match_by}${match_to}`;
+        socket.to(room).emit('message', message);
+        console.log(`user ${sender.name} speak : ${message} to room : ${room}`);
+    });
 
-        // const roomName = `room-${sender.id}`;
-        socket.join(roomName);
+    socket.on('messageTo', (match_by, match_to) => {
 
-        console.log(user.id, "join room :", roomName)
+        const room = `room-${match_by}${match_to}`;
 
-        // console.log("userId : ",user.id)
-        // console.log("userName : ",user.name)
-        // console.log("userEmail : ",user.email)
-        // console.log("socket.room :",socket.rooms)
-        // io.to()
-    })
+        socket.join(room);
 
-
-    socket.on('disconnecting', () => {
-        console.log('disconnected', socket.id)
-        socket.broadcast.emit('message', `${socket.id} left`)
-    })
-
+        console.log("join room")
+    });
 });
 
 
+
 export default defineEventHandler((event) => {
-    // console.log('New request: ' + getRequestURL(event))
-    console.log('New request event')
-})
-
-
-
+    console.log('New request event');
+});

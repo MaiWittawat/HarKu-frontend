@@ -1,75 +1,71 @@
-# Nuxt 3 Minimal Starter
+# วิทวัส พิณรัตน์ 6410451393
+# หทัยทิพย์ แก้วคำ 6410451521
+# ชวิศ สิทธิธรรมจักษ์ 6410450842
+# พุฒิพงศ์ ศรีนา 6410450206
+# หทัยชนก กลัดงาม 6410451512
+# พุธิตา ไพบูลย์ธนสมบัติ 6410451245
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+เป็นโปรเจคเกี่ยวกับแอพพลิเคชั่นหาคู่ที่จะแสดงข้อมูลโดยย่อ เช่น ชื่อ ความชอบ รูปภาพ ของผู้ใช้ เพื่อให้ผู้ใช้สามารถหาคู่โดยวิธีการรปัดไปทางขวาคือชอบ ทางซ้ายคือไม่ชอบ ถ้าทั้งสองฝ่ายชอบเหมือนกันก็จะสามารถแชทหากันได้
 
-## Setup
+# วิธีการใช้งาน 
 
-Make sure to install the dependencies:
+* 1. ล็อกอินหรือสร้างบัญชี
+   1.1 หากคุณเป็นผู้ใช้ใหม่, คุณสามารถล็อกอินผ่าน Email และ กรอกรหัสผ่านให้ถูฏต้องตามที่ตั้งไว้ 
+  1.2 หากคุณยังไม่มีบัญชี, คุณสามารถสร้างบัญชีใหม่โดยกรอกข้อมูลขั้นตอนแรก
 
-```bash
-# npm
-npm install
+* 2. Profile Setup
+   2.1 คุณจะต้องบันทึกโปรไฟล์โดยให้ข้อมูลเกี่ยวกับตัวเอง เช่น รูปภาพ, คำอธิบาย, และข้อมูลส่วนตัว.
+   2.2 คุณสามารถเพิ่มรูปภาพหลายรูปภาพและเขียนคำอธิบายที่น่าสนใจ.
 
-# pnpm
-pnpm install
+* 3. Search for Matches:
+   3.1 หลังจากบันทึกโปรไฟล์, คุณสามารถค้นหาคู่ครองโดยใช้เกณฑ์ต่าง ๆ เช่น เพศ, ระยะทาง, และอายุ.
+   3.2 คุณสามารถ swipe right เพื่อแสดงความสนใจในโปรไฟล์ของคนอื่น หรือ swipe left เพื่อไม่แสดงความสนใจ
 
-# yarn
-yarn install
+* 4. Matching
+   4.1 หากคุณแสดงความสนใจในโปรไฟล์ของคนอื่น และคนนั้นก็แสดงความสนใจกลับในโปรไฟล์ของคุณ, การ match จะเกิดขึ้น.
+   4.2 คุณสามารถเริ่มสนทนากับคู่ครองของคุณที่ทำการ match
 
-# bun
-bun install
-```
+* 5. การสนทนา Messaging
+   5.1 หลังจาก match, คุณสามารถสนทนากับคู่ครองของคุณผ่านระบบข้อความใน QuickDate
+   5.2 คุณสามารถส่งข้อความข้อความในการสนทนา
 
-## Development Server
+* 6. ความสัมพันธ์ 
+   6.1 คุณสามารถทำความรู้จักคู่ครองของคุณและสร้างความสัมพันธ์ผ่านการสนทนาและการพบปะ.
 
-Start the development server on `http://localhost:3000`:
 
-```bash
-# npm
-npm run dev
+# วิธีการติดตั้ง
+* ใช้ได้กับคนที่มี docker ในเครื่องเท่านั้น !!
 
-# pnpm
-pnpm run dev
 
-# yarn
-yarn dev
+* 1. clone code ทั้งหน้าบ้านเเละหลังบ้านจาก github
+    1.1 https://github.com/MaiWittawat/HarKu-frontend.git (NuxtJs)
+    1.2 https://github.com/MaiWittawat/HarKu-backend.git (Laravel)
 
-# bun
-bun run dev
-```
+* 2. หลังจาก clone เเล้วให้รันคำสั่ง
+    2.1 cd เข้าไปที่ directory  ที่ติดตั้งโปรเจ็ค (NuxtJs)
+    2.2 npm install (NuxtJs)
+    2.3 กำหนดค่า Configuration ใน nuxt.config.js (NuxtJs)
+    2.4 ทดสอบการรันด้วย npm run dev (NuxtJs) 
 
-## Production
+    2.5 cd เข้าไปที่ directory ที่ติดตั้งโปรเจ็ค(Laravel)
+    2.6 รันคำสั่ง  (Laravel)
+        docker run --rm \
+        -u "$(id -u):$(id -g)" \
+        -v "$(pwd):/var/www/html" \
+        -w /var/www/html \
+        laravelsail/php82-composer:latest \
+        composer install --ignore-platform-reqs
 
-Build the application for production:
+    2.7 cp .env.example .env  (Laravel)
+    2.8 กำหนดค่าใน .env (Laravel)
+    2.9 รันคำสั่ง sail up -d (Laravel)
+    2.10 รันคำสั่ง sail yarn install (Laravel)
+    2.11 รันคำสั่ง sail yarn dev (Laravel)
 
-```bash
-# npm
-npm run build
 
-# pnpm
-pnpm run build
+# Jira 
+ * https://akarapon.atlassian.net/jira/software/projects/QUIC/boards/4/timeline?shared=&atlOrigin=eyJpIjoiMTE1Mjc5MDYxMGNmNDAwZWI0NjBiMGVjMWM4MTc1MzMiLCJwIjoiaiJ9
 
-# yarn
-yarn build
+# PDF
+ * https://me-qr.com/th/mobile/pdf/18580382
 
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

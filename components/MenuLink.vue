@@ -1,5 +1,5 @@
 <template>
-    <NuxtLink :to="to" class="inline-block px-4 py-2 ">
+    <NuxtLink :to="to" class="inline-block">
         <slot />
     </NuxtLink>
 </template>
